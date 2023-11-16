@@ -9,33 +9,17 @@
 - Análisis estadístico de resultados utilizando el método de Monte Carlo.
 - Registro de resultados en `output/game_log.csv` para análisis detallados.
 
-Aquí tienes una forma de incorporar la información sobre el acceso al grafo en graphonline.ru en tu archivo README:
+Lamento la confusión. Entiendo tus indicaciones. Aquí está la revisión con la imagen incluida:
 
----
+## El grafo
+En este proyecto, hemos utilizado un mapa proporcionado en el juego "La Torre Encantada". Para representar y visualizar este mapa, lo pasamos a través de la herramienta en línea [graphonline.ru](https://graphonline.ru/en/), que nos permitió generar un archivo .graphml.
 
-## Visualización del Grafo
+Gracias a la biblioteca NetworkX en Python, pudimos cargar y mapear las posiciones de este grafo directamente desde el archivo .graphml. Esto nos permitió mostrar el mapa en pantalla utilizando Pygame.
 
-### Grafo en Graphonline.ru
+![Visualización del Grafo](assets/graph.png)
 
-El grafo original, definido como un diccionario en Python, se ha visualizado utilizando la herramienta online [graphonline.ru](https://graphonline.ru/en/). Esta herramienta permite una representación interactiva y visual del grafo, facilitando la comprensión de su estructura y conexiones.
-
-La imagen que muestra esta visualización se encuentra en el directorio de assets bajo el nombre `assets/graphru.png`. Esta representación es útil para obtener una vista rápida y clara del grafo y sus relaciones.
-
-![Visualización en Graphonline.ru](assets/graphru.png)
-
-Para ver y explorar interactivamente este grafo en graphonline.ru, puedes visitar el siguiente enlace: [Ver Grafo en Graphonline.ru](http://graphonline.ru/es/?graph=uYdBCksPktZJJLpBZZcst). Este enlace te llevará directamente a la visualización del grafo, donde podrás interactuar con él y ver más detalles sobre su estructura y conexiones.
-
-### Grafo en NetworkX
-
-Para una manipulación y análisis más profundos del grafo, se utilizó la biblioteca NetworkX en Python. NetworkX es una herramienta poderosa para la creación, manipulación y estudio de la estructura, dinámica y funciones de redes complejas.
-
-Dado que el grafo está definido como un diccionario en Python, se utilizó NetworkX para convertirlo en un objeto de grafo y aplicar un layout para su visualización. El layout elegido fue `kamada_kawai_layout`, ya que ofrecía una distribución que se asemejaba más a la estructura original del grafo.
-
-Es importante destacar que, aunque se utilizó un layout específico, la disposición de los nodos y aristas cambió ligeramente en comparación con la visualización original en graphonline.ru. Esto es normal, ya que los algoritmos de layout en NetworkX buscan optimizar la disposición basándose en diferentes criterios matemáticos y estéticos.
-
-La imagen resultante de esta visualización con NetworkX se encuentra en el directorio de assets bajo el nombre `assets/networkx.png`.
-
-![Visualización en NetworkX](assets/networkx.png)
+Puedes explorar y manipular interactivamente este grafo en Graphonline.ru a través del siguiente enlace:
+[Ver Grafo en Graphonline.ru](http://graphonline.ru/es/?graph=DLyXrovLgHQCpIxpZZcst).
 
 
 ## Componentes

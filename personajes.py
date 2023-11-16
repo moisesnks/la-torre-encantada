@@ -18,31 +18,36 @@ class Personajes:
         heroe_wins (int): Contador de victorias del héroe.
         bruja_wins (int): Contador de victorias de la bruja.
     """
-    def __init__(self, graph, dado):
+    def __init__(self, graph, dado, heroe_initial_position):
         """
         Inicializa los personajes y sus posiciones iniciales.
 
         Args:
             graph (networkx.Graph): Grafo del juego.
             dado (Dado): Dado para determinar los movimientos.
+            heroe_initial_position (int): Posición inicial del héroe en el grafo.
         """
         self.graph = graph
         self.dado = dado
-        self.reset_positions()
+        self.heroe_position = heroe_initial_position
+        self.reset_positions(heroe_initial_position)
         self.game_over = False
         self.heroe_found_key = False  # To track if the hero found the key
         self.heroe_moves = []  # List to store hero's movements
         self.bruja_moves = []  # List to store witch's movements
         self.heroe_wins = 0  # Counter for hero's wins
         self.bruja_wins = 0  # Counter for witch's wins
-
-    def reset_positions(self):
+        
+    def reset_positions(self, heroe_initial_position):
         """
         Reinicia las posiciones de los personajes y la llave en el grafo.
+
+        Args:
+            heroe_initial_position (int): Posición inicial del héroe en el grafo.
         """
-        self.heroe_position = 6  # The hero starts at node 6
-        self.bruja_position = 1  # The witch starts at node 1
-        self.llave_position = random.choice([24, 29, 33])  # A random position for the key is chosen
+        self.heroe_position = heroe_initial_position
+        self.bruja_position = 0  # La bruja comienza en el nodo 1
+        self.llave_position = random.choice([23, 27, 32])  # Las posiciones son 24, 28 y 33, pero se indexan desde 0
 
     def mover_heroe(self):
         """
@@ -69,13 +74,13 @@ class Personajes:
             if not adyacentes:
                 break
 
-            # Elegir un nuevo nodo adyacente al que moverse
+            # Elegir un nuevo nodo adyacente al que moverse, excluyendo el nodo del que proviene
             next_position = random.choice(adyacentes)
             prev_position = self.heroe_position
             self.heroe_position = next_position
 
             # Comprobar si el héroe ha encontrado la llave solo si está en uno de los nodos válidos
-            if self.heroe_position in [24, 29, 33] and self.heroe_position == self.llave_position:
+            if self.heroe_position in [23, 27, 32] and self.heroe_position == self.llave_position:
                 self.game_over = True
                 self.heroe_found_key = True
                 self.heroe_wins += 1  # Incrementar el contador de victorias del héroe

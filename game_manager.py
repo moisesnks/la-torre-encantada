@@ -23,8 +23,9 @@ class GameManager:
         heroe_win_text, bruja_win_text (StatText): Textos de estadísticas para victorias de héroe y bruja.
         heroe_win_percentage, bruja_win_percentage (float): Porcentajes de victoria del héroe y la bruja.
         dado_rect, grafo_rect (pygame.Rect): Rectángulos para representar el dado y el grafo.
+        heroe_initial_position (int): Posición inicial del héroe en el grafo.
     """
-    def __init__(self, grafo, dado, display, wt, n_iterations):
+    def __init__(self, grafo, dado, display, wt, n_iterations, heroe_initial_position):
         """
         Inicializa el GameManager con los componentes del juego, tiempo de espera y número de iteraciones.
 
@@ -34,12 +35,14 @@ class GameManager:
             display (GameDisplay): Objeto para la visualización del juego.
             wt (float): Tiempo de espera entre iteraciones.
             n_iterations (int): Número total de iteraciones a jugar.
+            heroe_initial_position (int): Posición inicial del héroe en el grafo.
         """
         self.grafo = grafo
         self.dado = dado
         self.display = display
         self.waiting_time = wt
         self.n_iterations = n_iterations
+        self.heroe_initial_position = heroe_initial_position
 
         # Initialize logger for this game session
         self.logger = None
@@ -88,7 +91,7 @@ class GameManager:
         heroe_wins_history (list): Historial de victorias del héroe.
         bruja_wins_history (list): Historial de victorias de la bruja.
         """
-        personajes = Personajes(self.grafo.graph, self.dado)
+        personajes = Personajes(self.grafo.graph, self.dado, self.heroe_initial_position)
         game_data = []
 
         running = True

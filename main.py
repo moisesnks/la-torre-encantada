@@ -10,6 +10,46 @@ from montecarlo import AnalizadorMonteCarlo
 from game_display import GameDisplay
 from game_manager import GameManager
 
+def prompt_for_heroe_starting_position(screen, font):
+    """
+    Solicita al usuario la posición inicial del héroe.
+
+    Args:
+        screen (pygame.Surface): Superficie de Pygame donde se mostrará el prompt.
+        font (pygame.font.Font): Fuente para renderizar el texto.
+
+    Returns:
+        int: Posición inicial del héroe ingresada por el usuario (6, 7 u 8).
+    """
+    running = True
+    input_string = ''
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    try:
+                        position = int(input_string)
+                        if position in [1, 2, 3]:
+                            return position + 4
+                    except ValueError:
+                        pass
+                elif event.key == pygame.K_BACKSPACE:
+                    input_string = input_string[:-1]
+                else:
+                    input_string += event.unicode
+
+        screen.fill(config.COLOR_BACKGROUND)
+        prompt_text = "Ingrese la posición inicial del héroe (1, 2 o 3) y presione ENTER:"
+        text_surface = font.render(prompt_text, True, config.COLOR_TEXT_DEFAULT)
+        screen.blit(text_surface, (50, 50))
+        input_surface = font.render(input_string, True, config.COLOR_TEXT_DEFAULT)
+        screen.blit(input_surface, (50, 100))
+        pygame.display.flip()
+
 def prompt_for_iterations(screen, font):
     """
     Solicita al usuario el número de iteraciones del juego.
@@ -59,13 +99,15 @@ def main():
     pygame.display.set_caption("La Torre Encantada")
     font = pygame.font.Font(None, config.FONT_SIZE)
 
+    heroe_initial_position = prompt_for_heroe_starting_position(screen, font)
+
     n_iterations = prompt_for_iterations(screen, font)
 
     grafo = ModuloGrafo(pygame.Rect(config.RECT_GRAFO_X, config.RECT_GRAFO_Y, config.RECT_GRAFO_WIDTH, config.RECT_GRAFO_HEIGHT))
     dado = ModuloDado(pygame.Rect(config.RECT_DADO_X, config.RECT_DADO_Y, config.RECT_DADO_WIDTH, config.RECT_DADO_HEIGHT), font)
     display = GameDisplay(screen, font, 1 / (n_iterations * 100))
 
-    game_manager = GameManager(grafo, dado, display, 1 / (n_iterations), n_iterations)
+    game_manager = GameManager(grafo, dado, display, 1/(n_iterations*10) , n_iterations, heroe_initial_position)
 
     heroe_wins_history = []  # Lista para el seguimiento de las victorias del héroe
     bruja_wins_history = []  # Lista para el seguimiento de las victorias de la bruja
