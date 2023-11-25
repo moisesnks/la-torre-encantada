@@ -7,11 +7,25 @@ from game_display import GameDisplay
 from game_manager import GameManager
 from game_logger import GameLogger
 import time
+import pandas as pd
 
 import pygame
 from montecarlo import AnalizadorMonteCarlo
 from game_display import GameDisplay
 from game_manager import GameManager
+
+
+def combinar_csvs(archivos_csv, archivo_combinado):
+    dataframes = []
+    for i, archivo in enumerate(archivos_csv, start=1):
+        df = pd.read_csv(archivo)
+        # Agrega un identificador único a la columna de iteración
+        df['Iteration'] = f"{i}." + df['Iteration'].astype(str)
+        dataframes.append(df)
+    df_combinado = pd.concat(dataframes, ignore_index=True)
+    df_combinado.to_csv(archivo_combinado, index=False)
+
+
 
 def prompt_for_iterations(screen, font):
     """
@@ -61,6 +75,8 @@ def main():
 
     n_iterations = prompt_for_iterations(screen, font)
 
+    archivos_csv = []
+
     for heroe_initial_position in [1, 2, 3]:
         time.sleep(1)
         grafo = ModuloGrafo(pygame.Rect(config.RECT_GRAFO_X, config.RECT_GRAFO_Y, config.RECT_GRAFO_WIDTH, config.RECT_GRAFO_HEIGHT))
@@ -69,6 +85,8 @@ def main():
 
         # Genera un nombre de archivo CSV único basado en la posición inicial del héroe
         csv_filename = f'output/game_log_{heroe_initial_position}.csv'
+        archivos_csv.append(csv_filename)
+
 
         # Comprueba si el archivo ya existe y, en ese caso, lo elimina para crear uno nuevo
         if os.path.exists(csv_filename):
@@ -78,7 +96,7 @@ def main():
         game_logger = GameLogger(csv_filename)
 
         # Utiliza n_iterations como argumento en lugar de self.n_iterations
-        game_manager = GameManager(grafo, dado, display, 0.1, n_iterations, heroe_initial_position + 4, game_logger)
+        game_manager = GameManager(grafo, dado, display, 0.001, n_iterations, heroe_initial_position + 4, game_logger)
 
         game_manager.run_game()  # Ejecuta el juego con las iteraciones actualizadas
     text_to_display = "Juego terminado. Presiona 'Esc' para salir o 'S' para modo estadístico."
@@ -98,10 +116,14 @@ def main():
                     pygame.quit()
                     exit()
                 elif event.key == pygame.K_s:
-                    for position in [1, 2, 3]:
-                        game_log_file = f'output/game_log_{position}.csv'
-                        analizador = AnalizadorMonteCarlo(game_log_file)
-                        analizador.analizar_y_graficar()
+                    archivo_combinado = 'output/game_log_combinado.csv'
+                    combinar_csvs(archivos_csv, archivo_combinado)
+                    
+                    analizador = AnalizadorMonteCarlo(archivo_combinado)
+                    analizador.analizar_y_graficar()
+
+                    screen.blit(text_surface, text_rect)
+                    pygame.display.flip()
 
 if __name__ == "__main__":
     main()

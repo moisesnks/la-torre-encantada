@@ -25,30 +25,37 @@ class Personajes:
         self.llave_position = random.choice([23, 27, 32])
 
     def mover_heroe(self, iteration):
-            if self.game_over:
-                return
+        if self.game_over:
+            return
 
+        dice_result = self.dado.roll()
+        self.pasos_heroe = dice_result[1]
+
+        movimientos = [self.heroe_position]
+
+        for _ in range(self.pasos_heroe):
             prev_position = self.heroe_position
-            dice_result = self.dado.roll()
-            self.pasos_heroe = dice_result[1]
+            adyacentes = list(self.graph.neighbors(self.heroe_position))
+            adyacentes = [pos for pos in adyacentes if pos != prev_position]
+            if not adyacentes:
+                break  # No hay movimientos posibles desde la posición actual
 
-            for _ in range(self.pasos_heroe):
-                adyacentes = list(self.graph.neighbors(self.heroe_position))
-                adyacentes = [pos for pos in adyacentes if pos != prev_position]
-                if not adyacentes:
-                    break
+            next_position = random.choice(adyacentes)
+            prev_position = self.heroe_position  # Actualizar la posición previa antes de mover al héroe
+            self.heroe_position = next_position
+            movimientos.append(self.heroe_position)
 
-                next_position = random.choice(adyacentes)
-                prev_position = self.heroe_position
-                self.heroe_position = next_position
-                if self.heroe_position == self.llave_position:
-                    self.game_over = True
-                    self.heroe_found_key = True
-                    break
+            if self.heroe_position == self.llave_position:
+                self.game_over = True
+                self.heroe_found_key = True
+                break
 
-            self.ultimo_mov_heroe = (prev_position, self.heroe_position)
-            self.game_logger.log_movement(iteration, "Heroe", prev_position, self.heroe_position, self.pasos_heroe, 0)
+        secuencia_movimientos = ' -> '.join(map(str, movimientos))
+        info_movimiento = f"Iteración: {iteration}, Pasos dados: {self.pasos_heroe}, Movimientos: {secuencia_movimientos}"
+        print(info_movimiento)
 
+        self.ultimo_mov_heroe = (movimientos[-2], self.heroe_position) if len(movimientos) > 1 else (self.heroe_position, self.heroe_position)
+        self.game_logger.log_movement(iteration, "Heroe", self.ultimo_mov_heroe[0], self.heroe_position, self.pasos_heroe, 0)
 
     def mover_bruja(self, iteration):
         if self.game_over:

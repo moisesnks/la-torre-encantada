@@ -13,8 +13,6 @@ class GameManager:
         self.waiting_time = wt
         self.n_iterations = n_iterations
         self.heroe_initial_position = heroe_initial_position
-        self.heroe_wins = 0
-        self.bruja_wins = 0
         self.game_logger = game_logger 
         self.init_graphics()
 
@@ -31,14 +29,19 @@ class GameManager:
         self.bruja_win_text = StatText(config.GAME_MANAGER_STAT_TEXT_X, config.GAME_MANAGER_STAT_TEXT_Y_BRUJA, font, config.GAME_MANAGER_BRUJA_COLOR)
 
     def run_game(self):
+        # Crear la instancia de Personajes una sola vez
+        personajes = Personajes(self.grafo.graph, self.dado, self.heroe_initial_position, self.game_logger)
+
         for iteration in range(self.n_iterations):
-            # Pasar game_logger a Personajes
-            personajes = Personajes(self.grafo.graph, self.dado, self.heroe_initial_position, self.game_logger)
+            # Resetear el estado del juego para la nueva iteración, excepto los contadores de victorias
+            personajes.reset_positions(self.heroe_initial_position)
+
 
             if self.game_loop(personajes, iteration):
                 break
 
-            self.update_score(personajes)
+            self.update_and_draw_statistics(iteration, personajes)
+
 
     def game_loop(self, personajes, iteration):
         running = True
@@ -49,7 +52,7 @@ class GameManager:
             running = self.update_game_state(personajes, iteration)
 
             # Actualiza y dibuja las estadísticas
-            self.update_and_draw_statistics(iteration)
+            self.update_and_draw_statistics(iteration, personajes)
 
             # Actualiza la pantalla para reflejar los cambios
             pygame.display.update()
@@ -137,12 +140,13 @@ class GameManager:
         self.heroe_win_text.draw(self.display.screen)
         self.bruja_win_text.draw(self.display.screen)
 
-    def update_and_draw_statistics(self, iteration):
-        print(self.heroe_wins, self.bruja_wins)
-        total_iterations = self.n_iterations
-        heroe_win_percentage = self.heroe_wins / total_iterations * 100
-        bruja_win_percentage = self.bruja_wins / total_iterations * 100
+    def update_and_draw_statistics(self, iteration, personajes):
+        total_iterations = iteration + 1
+        heroe_wins = personajes.get_heroe_wins()
+        bruja_wins = personajes.get_bruja_wins()
+        heroe_win_percentage = heroe_wins / total_iterations * 100
+        bruja_win_percentage = bruja_wins / total_iterations * 100
 
         self.update_stat_bars(heroe_win_percentage, bruja_win_percentage)
-        self.update_stat_texts(self.heroe_wins, self.bruja_wins, heroe_win_percentage, bruja_win_percentage)
+        self.update_stat_texts(heroe_wins, bruja_wins, heroe_win_percentage, bruja_win_percentage)
         self.draw_stats()
