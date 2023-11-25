@@ -81,3 +81,22 @@ class ModuloDado:
         # Dibuja el texto sobre el botón
         screen.blit(result_top, top_text_pos)
         screen.blit(result_bottom, bottom_text_pos)
+
+    def cargar_dado_bruja(self, cantidad):
+        """
+        Aumenta la probabilidad de que la bruja obtenga un resultado más alto.
+
+        Parámetros:
+            cantidad (int): La cantidad para aumentar el primer elemento de los resultados del dado.
+        """
+        self.results = [(min(6, bruja + cantidad), heroe) for bruja, heroe in self.results]
+
+    def cargar_dado_heroe(self, cantidad):
+        """
+        Aumenta la probabilidad de que el héroe obtenga un resultado más alto.
+
+        Parámetros:
+            cantidad (int): La cantidad para aumentar el segundo elemento de los resultados del dado.
+        """
+        self.results = [(bruja, min(6, heroe + cantidad)) for bruja, heroe in self.results]
+
