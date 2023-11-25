@@ -50,18 +50,30 @@ class ModuloGrafo:
 
             posiciones[node_id] = (pos_x, pos_y)
 
-        # Calcular los factores de escala
-        x_scale = (self.rect.width - 2 * self.padding) / (max_x - min_x) if max_x > min_x else 1
-        y_scale = (self.rect.height - 2 * self.padding) / (max_y - min_y) if max_y > min_y else 1
+        # Calcular el tamaño máximo cuadrado que cabe dentro del contenedor
+        cuadrado_maximo = min(self.rect.width - 2 * self.padding, self.rect.height - 2 * self.padding)
 
-        # Escalar y ajustar las coordenadas
+        # Calcular el factor de escala necesario para ajustar al cuadrado máximo
+        x_range = max_x - min_x
+        y_range = max_y - min_y
+        max_range = max(x_range, y_range)
+
+        if max_range > 0:
+            scale_factor = cuadrado_maximo / max_range
+        else:
+            scale_factor = 1.0
+
+        # Centrar el grafo dentro del cuadrado resultante
+        desplazamiento_x = (self.rect.width - 2 * self.padding - max_x * scale_factor) / 2
+        desplazamiento_y = (self.rect.height - 2 * self.padding - max_y * scale_factor) / 2
+
+        # Aplicar el factor de escala y el desplazamiento a las coordenadas
         for node_id, (pos_x, pos_y) in posiciones.items():
-            scaled_x = (pos_x - min_x) * x_scale + self.padding + self.rect.x
-            scaled_y = (pos_y - min_y) * y_scale + self.padding + self.rect.y
+            scaled_x = (pos_x - min_x) * scale_factor + desplazamiento_x + self.padding + self.rect.x
+            scaled_y = (pos_y - min_y) * scale_factor + desplazamiento_y + self.padding + self.rect.y
             posiciones[node_id] = (scaled_x, scaled_y)
 
         return posiciones
-
 
     def dibujar_grafo(self, screen):
         posiciones = self.posiciones
@@ -95,8 +107,8 @@ class ModuloGrafo:
 # Ejemplo de uso
 if __name__ == "__main__":
     pygame.init()
-    screen = pygame.display.set_mode((800, 600))
-    modulo_grafo = ModuloGrafo(pygame.Rect(0, 0, 800, 600))
+    screen = pygame.display.set_mode((500, 300))  # Contenedor más pequeño
+    modulo_grafo = ModuloGrafo(pygame.Rect(0, 0, 500, 300))
     
     ejecutando = True
     while ejecutando:

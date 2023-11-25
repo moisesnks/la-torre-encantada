@@ -1,0 +1,17 @@
+Iteration,Character,Prev_Position,New_Position,Steps,Result
+0,Heroe,5,4,1,0
+0,Bruja,0,1,1,0
+0,Heroe,5,6,2,0
+0,Bruja,1,1,0,0
+0,Heroe,15,10,3,0
+0,Bruja,1,2,1,0
+0,Heroe,21,20,3,0
+0,Bruja,2,3,1,0
+0,Heroe,18,38,3,0
+0,Bruja,3,4,1,0
+0,Heroe,31,33,3,0
+0,Bruja,4,6,2,0
+0,Heroe,33,33,0,0
+0,Bruja,6,7,1,0
+0,Heroe,33,32,1,0
+0,HEROE,32,32,0,1

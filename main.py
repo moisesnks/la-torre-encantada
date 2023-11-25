@@ -1,54 +1,17 @@
 import pygame
+import os
 import config
 from modulo_grafo import ModuloGrafo
 from modulo_dado import ModuloDado
 from game_display import GameDisplay
 from game_manager import GameManager
+from game_logger import GameLogger
+import time
 
 import pygame
 from montecarlo import AnalizadorMonteCarlo
 from game_display import GameDisplay
 from game_manager import GameManager
-
-def prompt_for_heroe_starting_position(screen, font):
-    """
-    Solicita al usuario la posición inicial del héroe.
-
-    Args:
-        screen (pygame.Surface): Superficie de Pygame donde se mostrará el prompt.
-        font (pygame.font.Font): Fuente para renderizar el texto.
-
-    Returns:
-        int: Posición inicial del héroe ingresada por el usuario (6, 7 u 8).
-    """
-    running = True
-    input_string = ''
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-                exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    try:
-                        position = int(input_string)
-                        if position in [1, 2, 3]:
-                            return position + 4
-                    except ValueError:
-                        pass
-                elif event.key == pygame.K_BACKSPACE:
-                    input_string = input_string[:-1]
-                else:
-                    input_string += event.unicode
-
-        screen.fill(config.COLOR_BACKGROUND)
-        prompt_text = "Ingrese la posición inicial del héroe (1, 2 o 3) y presione ENTER:"
-        text_surface = font.render(prompt_text, True, config.COLOR_TEXT_DEFAULT)
-        screen.blit(text_surface, (50, 50))
-        input_surface = font.render(input_string, True, config.COLOR_TEXT_DEFAULT)
-        screen.blit(input_surface, (50, 100))
-        pygame.display.flip()
 
 def prompt_for_iterations(screen, font):
     """
@@ -91,33 +54,33 @@ def prompt_for_iterations(screen, font):
         return 1
 
 def main():
-    """
-    Función principal que inicia y ejecuta el juego.
-    """
     pygame.init()
     screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
     pygame.display.set_caption("La Torre Encantada")
     font = pygame.font.Font(None, config.FONT_SIZE)
 
-    heroe_initial_position = prompt_for_heroe_starting_position(screen, font)
-
     n_iterations = prompt_for_iterations(screen, font)
 
-    grafo = ModuloGrafo(pygame.Rect(config.RECT_GRAFO_X, config.RECT_GRAFO_Y, config.RECT_GRAFO_WIDTH, config.RECT_GRAFO_HEIGHT))
-    dado = ModuloDado(pygame.Rect(config.RECT_DADO_X, config.RECT_DADO_Y, config.RECT_DADO_WIDTH, config.RECT_DADO_HEIGHT), font)
-    display = GameDisplay(screen, font, 1 / (n_iterations * 100))
+    for heroe_initial_position in [1, 2, 3]:
+        time.sleep(1)
+        grafo = ModuloGrafo(pygame.Rect(config.RECT_GRAFO_X, config.RECT_GRAFO_Y, config.RECT_GRAFO_WIDTH, config.RECT_GRAFO_HEIGHT))
+        dado = ModuloDado(pygame.Rect(config.RECT_DADO_X, config.RECT_DADO_Y, config.RECT_DADO_WIDTH, config.RECT_DADO_HEIGHT), font)
+        display = GameDisplay(screen, font, 3 / (n_iterations * 100))
 
-    game_manager = GameManager(grafo, dado, display, 1/(n_iterations*10) , n_iterations, heroe_initial_position)
+        # Genera un nombre de archivo CSV único basado en la posición inicial del héroe
+        csv_filename = f'output/game_log_{heroe_initial_position}.csv'
 
-    heroe_wins_history = []  # Lista para el seguimiento de las victorias del héroe
-    bruja_wins_history = []  # Lista para el seguimiento de las victorias de la bruja
+        # Comprueba si el archivo ya existe y, en ese caso, lo elimina para crear uno nuevo
+        if os.path.exists(csv_filename):
+            os.remove(csv_filename)
 
-    for iteration in range(1, n_iterations + 1):
-        game_manager.run_game(iteration, heroe_wins_history, bruja_wins_history)
-        
-        # Dibuja las estadísticas en cada iteración
-        game_manager.draw_stats()
+        # Crea una instancia de GameLogger para la posición inicial del héroe
+        game_logger = GameLogger(csv_filename)
 
+        # Utiliza n_iterations como argumento en lugar de self.n_iterations
+        game_manager = GameManager(grafo, dado, display, 0.1, n_iterations, heroe_initial_position + 4, game_logger)
+
+        game_manager.run_game()  # Ejecuta el juego con las iteraciones actualizadas
     text_to_display = "Juego terminado. Presiona 'Esc' para salir o 'S' para modo estadístico."
     text_surface = font.render(text_to_display, True, config.COLOR_TEXT_DEFAULT)
     text_rect = text_surface.get_rect(center=(config.WIDTH // 2, config.HEIGHT - 50))
@@ -134,9 +97,11 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     exit()
-                elif event.key == pygame.K_s:  # Listening for 'S' key for stat mode
-                    analizador = AnalizadorMonteCarlo('output/game_log.csv')
-                    analizador.analizar_y_graficar()
+                elif event.key == pygame.K_s:
+                    for position in [1, 2, 3]:
+                        game_log_file = f'output/game_log_{position}.csv'
+                        analizador = AnalizadorMonteCarlo(game_log_file)
+                        analizador.analizar_y_graficar()
 
 if __name__ == "__main__":
     main()

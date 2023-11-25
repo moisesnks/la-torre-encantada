@@ -38,8 +38,14 @@ class StatBar(Sprite):
     def update_bar(self):
         """
         Actualiza la longitud de la barra en función de los valores actual y máximo.
-        """        
-        bar_height = int(self.value / self.max_value * self.rect.height)
+        """
+        # Calcula la altura de la barra como una fracción del alto total del rectángulo
+        bar_height = int(self.value / 100 * self.rect.height)  # Se asume que self.value es un porcentaje
+
+        # Limpia la barra actual (para evitar el sobre dibujado)
+        self.image.fill((255, 255, 255))  # Fondo blanco (o el color de fondo deseado)
+
+        # Dibuja la nueva barra
         pygame.draw.rect(self.image, self.color, (0, self.rect.height - bar_height, self.rect.width, bar_height))
 
     def draw(self, screen):
