@@ -7,7 +7,10 @@ from game_logger import GameLogger
 import pygame
 import config
 import time
-from utils import eliminar_archivos_output, combinar_csvs
+from utils import eliminar_archivos_output, combinar_csvs, prompt_for_iterations, mostrar_menu_opciones, mostrar_mensaje_opciones, esperar_interaccion_usuario
+from analizador_montecarlo import AnalizadorMonteCarlo
+
+
 def iniciar_juego(screen, font, heroe_initial_position, n_iterations, csv_filename, dado=None):
     grafo = ModuloGrafo(pygame.Rect(config.RECT_GRAFO_X, config.RECT_GRAFO_Y, config.RECT_GRAFO_WIDTH, config.RECT_GRAFO_HEIGHT))
     if dado is None:
@@ -40,3 +43,18 @@ def reiniciar_juego(screen, font, opcion_elegida, n_iterations):
     archivo_combinado = 'output/game_log_combinado.csv'
     combinar_csvs(archivos_csv, archivo_combinado)
     time.sleep(1)
+
+    mostrar_mensaje_opciones(screen, font)
+
+    while True:
+        opcion_elegida = esperar_interaccion_usuario()
+        
+        if opcion_elegida == 'quit':
+            return  # Salir del programa
+        elif opcion_elegida == 's':
+            analizador = AnalizadorMonteCarlo(archivo_combinado)
+            analizador.analizar_y_graficar()
+        elif opcion_elegida == 'p':
+            opcion_elegida = mostrar_menu_opciones(screen, font)
+            if opcion_elegida:
+                reiniciar_juego(screen, font, opcion_elegida, n_iterations)

@@ -108,33 +108,27 @@ def eliminar_archivos_output():
         print(f"Error al eliminar archivos: {str(e)}")
 
 
-def mostrar_mensaje_opciones(screen, font, opcion_elegida):
+def mostrar_mensaje_opciones(screen, font):
     mensaje = "Presione Esc para salir, S para modo estadístico, o P para menú de propuestas."
     text_surface = font.render(mensaje, True, config.COLOR_TEXT_DEFAULT)
     text_rect = text_surface.get_rect(center=(config.WIDTH // 2, config.HEIGHT - 50))
     screen.blit(text_surface, text_rect)
+    pygame.display.flip()
 
-def ejecutar_juego(screen, font, n_iterations, archivos_csv):
-    pygame.init()
-    pygame.display.set_caption("La Torre Encantada")
-
-    opcion_elegida = None
-    mostrar_mensaje = True
-
-    while True:
+def esperar_interaccion_usuario():
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                running = False
                 pygame.quit()
-                return opcion_elegida
+                return 'quit'
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    running = False
                     pygame.quit()
-                    return opcion_elegida
+                    return 'quit'
                 elif event.key == pygame.K_s:
-                    opcion_elegida = 's'
+                    return 's'
                 elif event.key == pygame.K_p:
-                    opcion_elegida = 'p'
-        
-        if mostrar_mensaje:
-            mostrar_mensaje_opciones(screen, font, opcion_elegida)
-            mostrar_mensaje = False
+                    return 'p'
