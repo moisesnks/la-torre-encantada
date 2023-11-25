@@ -39,7 +39,7 @@ python main.py
 ```
 
 ## Ejecutando el archivo
-Una vez ejecutado el archivo, tendrá que definir cuántas iteraciones querrá simular, si simula entre [10-1] iteraciones podrá visualizar gráficamente cómo se mueve el héroe y la bruja, ya que el waiting-time para que se pueda visualizar está seteado en 0.6 segundos, sino, (si agrega un valor mayor) su waiting-time es de 1 milisegundo.
+Una vez ejecutado el archivo, tendrá que definir cuántas iteraciones querrá simular, si simula entre [1 a 10] iteraciones podrá visualizar gráficamente cómo se mueve el héroe y la bruja.
 
 ## Movimiento de la Bruja
 - La bruja conoce la ubicación de la llave desde el principio del juego.
