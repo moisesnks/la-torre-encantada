@@ -17,7 +17,13 @@ def iniciar_juego(screen, font, heroe_initial_position, n_iterations, csv_filena
         dado = ModuloDado(pygame.Rect(config.RECT_DADO_X, config.RECT_DADO_Y, config.RECT_DADO_WIDTH, config.RECT_DADO_HEIGHT), pygame.font.Font(None, config.FONT_SIZE))
     display = GameDisplay(screen, font, 3 / (n_iterations * 100))
     game_logger = GameLogger(csv_filename)
-    game_manager = GameManager(grafo, dado, display, 0.001, n_iterations, heroe_initial_position + 4, game_logger)
+    if(n_iterations > 10):
+        waiting_time = 0.00001
+    elif (n_iterations > 100):
+        waiting_time = 0.000001
+    elif (n_iterations > 1000):
+        waiting_time = 0
+    game_manager = GameManager(grafo, dado, display, waiting_time, n_iterations, heroe_initial_position + 4, game_logger)
     game_manager.run_game()
 
 
